@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Smart AI | Smart Online Shopping</title>
+  <meta name="description" content="Shop Smart AI - smart shopping, ₹1,000 thi ₹10,000 na best products, best prices ane fast delivery.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: #f4f6fa; color: #1f2937; overflow-x: hidden; }
+    body.lock { overflow: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+
+    /* =========================================================
+       NAVI INTRO: ring draw -> logo reveal -> curtain open
+       ========================================================= */
+    #intro { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; color: #fff; }
+    #intro .panel { position: absolute; top: 0; bottom: 0; width: 50.5%; background: #0b1220; transition: transform .95s cubic-bezier(.77,0,.18,1); }
+    #intro .panel.l { left: 0; background: linear-gradient(135deg, #0b1220, #0c4a6e); }
+    #intro .panel.r { right: 0; background: linear-gradient(225deg, #0b1220, #14532d); }
+    #intro.open .panel.l { transform: translateX(-101%); }
+    #intro.open .panel.r { transform: translateX(101%); }
+    #intro.open { pointer-events: none; }
+    .i-glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,.35), transparent 65%); animation: glow 3s ease-in-out infinite alternate; }
+    @keyframes glow { to { transform: scale(1.25); opacity: .6; } }
+    .i-content { position: relative; text-align: center; padding: 0 16px; transition: opacity .45s, transform .7s; }
+    #intro.open .i-content { opacity: 0; transform: scale(1.18); }
+
+    .i-ring { position: relative; width: 150px; height: 150px; margin: 0 auto 20px; }
+    .i-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+    .i-ring circle { fill: none; stroke-width: 5; }
+    .i-ring .track { stroke: rgba(255,255,255,.12); }
+    .i-ring .draw { stroke: #4ade80; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; animation: drawRing 2.6s .2s ease-in-out forwards; }
+    .i-ring .dash { stroke: #38bdf8; stroke-width: 2; stroke-dasharray: 6 10; transform-origin: 50% 50%; animation: spin 9s linear infinite; }
+    @keyframes drawRing { to { stroke-dashoffset: 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .i-bag { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 60px; animation: bagPop .8s .3s cubic-bezier(.2,1.6,.4,1) both; }
+    @keyframes bagPop { from { transform: scale(0) rotate(-40deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    .i-title { font-size: 44px; font-weight: 800; display: flex; justify-content: center; flex-wrap: wrap; letter-spacing: 1px; }
+    .i-title span { display: inline-block; opacity: 0; transform: translateY(34px); filter: blur(10px); animation: letter .7s cubic-bezier(.2,.9,.3,1) forwards; }
+    .i-title .acc { background: linear-gradient(90deg, #4ade80, #38bdf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .i-title .sp { width: 14px; }
+    @keyframes letter { to { opacity: 1; transform: none; filter: blur(0); } }
+    .i-tag { margin-top: 10px; font-size: 15px; letter-spacing: 4px; text-transform: uppercase; opacity: 0; animation: tagIn .8s 2s ease forwards; }
+    @keyframes tagIn { to { opacity: .85; } }
+    .i-pct { margin-top: 26px; font-size: 14px; font-weight: 700; letter-spacing: 2px; color: #7dd3fc; font-variant-numeric: tabular-nums; }
+    .i-line { width: 240px; height: 3px; background: rgba(255,255,255,.14); border-radius: 99px; margin: 8px auto 0; overflow: hidden; }
+    .i-line i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #38bdf8, #4ade80); }
+    .skip-btn { position: absolute; bottom: 26px; right: 26px; z-index: 2; background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.35); padding: 9px 20px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .skip-btn:hover { background: rgba(255,255,255,.25); }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    header {
+      background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 1px solid #e5e7eb;
+      padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #0284c7; }
+    .logo span { color: #16a34a; }
+    nav { display: flex; align-items: center; gap: 22px; }
+    nav a { color: #374151; font-weight: 500; position: relative; }
+    nav a::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px; background: #0284c7; transition: width .25s; }
+    nav a:hover { color: #0284c7; }
+    nav a:hover::after { width: 100%; }
+    .cart-badge { background: #16a34a; color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 12px; margin-left: 4px; }
+    .menu-btn { display: none; background: none; border: none; font-size: 26px; cursor: pointer; }
+
+    /* =========================================================
+       HERO (dark, glow, rotating text, floating real products)
+       ========================================================= */
+    .hero { position: relative; overflow: hidden; color: #fff; padding: 64px 24px 110px; background: linear-gradient(120deg, #0b1220, #0c4a6e 55%, #14532d); }
+    .orb { position: absolute; border-radius: 50%; filter: blur(70px); animation: orbMove 14s ease-in-out infinite alternate; }
+    .orb.o1 { width: 340px; height: 340px; background: rgba(56,189,248,.4); top: -110px; left: -80px; }
+    .orb.o2 { width: 300px; height: 300px; background: rgba(74,222,128,.32); bottom: -120px; right: 10%; animation-delay: 4s; }
+    .orb.o3 { width: 220px; height: 220px; background: rgba(167,139,250,.28); top: 30%; right: -60px; animation-delay: 8s; }
+    @keyframes orbMove { to { transform: translate(50px, 40px) scale(1.2); } }
+    .hero-inner { max-width: 1150px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: 30px; align-items: center; position: relative; z-index: 1; }
+    .eyebrow { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
+    .hero h1 { font-size: 48px; line-height: 1.12; margin-bottom: 14px; }
+    .rot-wrap { display: block; height: 1.2em; overflow: hidden; }
+    #rot { display: inline-block; background: linear-gradient(90deg, #4ade80, #38bdf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    #rot.swap { animation: swap .55s cubic-bezier(.2,.9,.3,1); }
+    @keyframes swap { from { transform: translateY(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+    .hero p { font-size: 18px; line-height: 1.65; opacity: .9; margin-bottom: 26px; max-width: 520px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn { padding: 14px 30px; border-radius: 12px; font-weight: 700; font-size: 16px; border: none; cursor: pointer; transition: transform .15s, box-shadow .2s, opacity .2s; display: inline-block; text-align: center; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,.25); }
+    .btn-white { background: #fff; color: #0284c7; }
+    .btn-line { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.7); }
+    .price-note { margin-top: 18px; font-size: 14px; opacity: .8; }
+
+    .hero-art { position: relative; height: 400px; }
+    .hc { position: absolute; transition: transform .2s ease-out; }
+    .hc-in { width: 190px; background: rgba(255,255,255,.95); color: #1f2937; border-radius: 18px; padding: 10px; box-shadow: 0 20px 44px rgba(0,0,0,.4); animation: floatY 5s ease-in-out infinite; display: block; }
+    .hc-in img { width: 100%; height: 130px; object-fit: contain; background: #f4f6fa; border-radius: 12px; }
+    .hc-in strong { display: block; font-size: 13px; margin: 8px 0 2px; line-height: 1.3; }
+    .hc-in span { font-weight: 800; color: #0284c7; }
+    .hc-in em { position: absolute; top: -10px; right: -10px; background: #dc2626; color: #fff; font-style: normal; font-weight: 800; font-size: 12px; padding: 5px 10px; border-radius: 999px; }
+    @keyframes floatY { 50% { transform: translateY(-16px) rotate(1.5deg); } }
+    .hc.a { top: 0; left: 8%; } .hc.b { top: 120px; right: 0; } .hc.b .hc-in { animation-delay: 1.2s; } .hc.c { bottom: 0; left: 24%; } .hc.c .hc-in { animation-delay: 2.4s; }
+
+    /* anim-in (hero text entrance after intro) */
+    .anim-in { opacity: 0; transform: translateY(30px); }
+    body.ready .anim-in { animation: slideIn .8s ease forwards; }
+    body.ready .d1 { animation-delay: .05s; } body.ready .d2 { animation-delay: .2s; } body.ready .d3 { animation-delay: .35s; } body.ready .d4 { animation-delay: .5s; } body.ready .d5 { animation-delay: .65s; }
+    @keyframes slideIn { to { opacity: 1; transform: none; } }
+
+    /* =========================================================
+       MARQUEE
+       ========================================================= */
+    .marquee { background: #0f172a; color: #e2e8f0; overflow: hidden; white-space: nowrap; padding: 14px 0; }
+    .marquee-track { display: inline-block; animation: scrollX 28s linear infinite; }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    .marquee span { display: inline-block; margin: 0 26px; font-weight: 700; font-size: 15px; letter-spacing: .5px; }
+    .marquee span b { color: #4ade80; margin-right: 8px; }
+    @keyframes scrollX { to { transform: translateX(-50%); } }
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+    .section { max-width: 1150px; margin: 0 auto; padding: 56px 20px 6px; }
+    .section-title { font-size: 28px; text-align: center; margin-bottom: 6px; }
+    .section-sub { text-align: center; color: #6b7280; margin-bottom: 28px; }
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.show { opacity: 1; transform: none; }
+
+    .features { max-width: 1150px; margin: -52px auto 0; padding: 0 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; z-index: 3; }
+    .feature { background: #fff; border-radius: 16px; padding: 20px 14px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,.1); transition: transform .2s; }
+    .feature:hover { transform: translateY(-6px); }
+    .feature .ic { font-size: 34px; margin-bottom: 6px; }
+    .feature h4 { font-size: 15px; margin-bottom: 3px; }
+    .feature p { font-size: 13px; color: #6b7280; }
+
+    /* Categories */
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .cat { background: #fff; border-radius: 16px; padding: 26px 10px; text-align: center; font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,.05); transition: transform .25s, box-shadow .25s, background .25s; }
+    .cat .ic { font-size: 42px; display: block; margin-bottom: 8px; transition: transform .3s; }
+    .cat small { display: block; color: #6b7280; font-weight: 500; font-size: 12px; margin-top: 3px; }
+    .cat:hover { transform: translateY(-6px); box-shadow: 0 12px 26px rgba(2,132,199,.2); background: #f0f9ff; }
+    .cat:hover .ic { transform: scale(1.2) rotate(-6deg); }
+
+    /* Deal of the day */
+    .deal { max-width: 1150px; margin: 56px auto 0; padding: 0 20px; }
+    .deal-box { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: center; background: linear-gradient(120deg, #7c2d12, #b91c1c 55%, #f59e0b 150%); color: #fff; border-radius: 22px; padding: 28px; position: relative; overflow: hidden; box-shadow: 0 16px 40px rgba(185,28,28,.35); }
+    .deal-box::before { content: ""; position: absolute; width: 280px; height: 280px; border-radius: 50%; background: rgba(255,255,255,.1); top: -100px; right: -60px; animation: orbMove 10s ease-in-out infinite alternate; }
+    .deal-box > * { position: relative; }
+    .deal-img { background: #fff; border-radius: 18px; height: 260px; overflow: hidden; display: block; box-shadow: 0 14px 30px rgba(0,0,0,.3); }
+    .deal-img img { width: 100%; height: 100%; object-fit: contain; transition: transform .4s; }
+    .deal-img:hover img { transform: scale(1.08); }
+    .deal-tag { display: inline-block; background: rgba(255,255,255,.18); padding: 5px 14px; border-radius: 999px; font-weight: 800; font-size: 13px; margin-bottom: 10px; }
+    .deal-box h2 { font-size: 27px; margin-bottom: 10px; line-height: 1.25; }
+    .deal-price { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .deal-price strong { font-size: 34px; }
+    .deal-price s { opacity: .75; font-size: 18px; }
+    .deal-price span { background: #fff; color: #b91c1c; padding: 3px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+    .timer { display: flex; gap: 10px; margin-bottom: 18px; }
+    .timer div { background: rgba(0,0,0,.28); border-radius: 12px; padding: 10px 0; min-width: 62px; text-align: center; }
+    .timer b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+    .timer small { font-size: 11px; opacity: .8; }
+    .deal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 380px; }
+    .deal-btns .b1 { background: #fff; color: #b91c1c; }
+    .deal-btns .b2 { background: #16a34a; color: #fff; }
+    .deal-btns .btn { padding: 13px 8px; font-size: 15px; }
+
+    /* Product tabs + cards */
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+    .tab { padding: 9px 20px; border-radius: 999px; border: 1px solid #d1d5db; background: #fff; font-weight: 700; font-size: 14px; color: #374151; cursor: pointer; transition: all .2s; }
+    .tab:hover { background: #f3f4f6; }
+    .tab.active { background: #0284c7; border-color: #0284c7; color: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 20px; }
+    .card { background: #fff; border-radius: 16px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 3px 14px rgba(0,0,0,.06); transition: transform .25s, box-shadow .25s; animation: cardIn .5s ease both; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+    .card:hover { transform: translateY(-7px); box-shadow: 0 16px 32px rgba(0,0,0,.14); }
+    .card .img { background: #f4f6fa; height: 200px; display: block; overflow: hidden; }
+    .card .img img { width: 100%; height: 100%; object-fit: contain; transition: transform .4s; }
+    .card:hover .img img { transform: scale(1.09); }
+    .badge { position: absolute; top: 12px; left: 12px; z-index: 2; background: #dc2626; color: #fff; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+    .heart { position: absolute; top: 10px; right: 10px; z-index: 2; width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,.95); font-size: 19px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.15); transition: transform .2s; }
+    .heart:hover { transform: scale(1.15); }
+    .oos { position: absolute; inset: 0 0 auto 0; height: 200px; background: rgba(255,255,255,.65); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #dc2626; font-size: 17px; pointer-events: none; }
+    .card .body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; }
+    .card .cat-name { font-size: 12px; color: #0284c7; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .card h3 { font-size: 16px; margin: 4px 0 6px; line-height: 1.35; min-height: 43px; }
+    .card h3 a:hover { color: #0284c7; }
+    .stars { color: #f59e0b; font-size: 14px; margin-bottom: 8px; }
+    .stars small { color: #6b7280; margin-left: 4px; }
+    .card .price { font-size: 21px; font-weight: 800; margin-bottom: 12px; }
+    .card .price small { color: #9ca3af; text-decoration: line-through; font-weight: 400; font-size: 14px; margin-left: 6px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+    .actions .btn { padding: 11px 6px; font-size: 14px; border-radius: 9px; color: #fff; }
+    .actions .btn:hover { transform: none; box-shadow: none; opacity: .88; }
+    .actions .btn:disabled { background: #9ca3af !important; cursor: not-allowed; }
+    .b-cart { background: #0284c7; } .b-buy { background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .actions .b-view { grid-column: 1 / -1; background: #e0f2fe; color: #0369a1; }
+    .see-all { text-align: center; margin-top: 28px; }
+    .see-all .btn { background: #0284c7; color: #fff; }
+
+    /* Promo + newsletter */
+    .promo { max-width: 1150px; margin: 56px auto 0; border-radius: 20px; padding: 44px 30px; text-align: center; background: linear-gradient(120deg, #16a34a, #0284c7); color: #fff; background-size: 200% 200%; animation: gradMove 7s ease infinite; }
+    @keyframes gradMove { 50% { background-position: 100% 50%; } }
+    .promo h2 { font-size: 30px; margin-bottom: 8px; }
+    .promo p { margin-bottom: 20px; opacity: .95; }
+    .news { max-width: 600px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; }
+    .news input { flex: 1; min-width: 200px; height: 48px; padding: 0 16px; border-radius: 10px; border: 1px solid #d1d5db; font-size: 15px; outline: none; }
+    .news input:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2,132,199,.15); }
+    .news button { height: 48px; padding: 0 26px; border: none; border-radius: 10px; background: #0284c7; color: #fff; font-weight: 700; cursor: pointer; }
+
+    footer { background: #0f172a; color: #cbd5e1; margin-top: 60px; padding: 40px 24px 20px; }
+    .foot-grid { max-width: 1150px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 28px; }
+    footer h4 { color: #fff; margin-bottom: 12px; }
+    footer a { display: block; margin-bottom: 8px; font-size: 14px; color: #94a3b8; }
+    footer a:hover { color: #fff; }
+    footer .about { font-size: 14px; line-height: 1.6; color: #94a3b8; }
+    .copy { text-align: center; border-top: 1px solid #1e293b; margin-top: 28px; padding-top: 16px; font-size: 13px; color: #64748b; }
+
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #111827; color: #fff; padding: 12px 22px; border-radius: 10px; opacity: 0; transition: all .3s; pointer-events: none; z-index: 200; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero h1 { font-size: 36px; }
+      .hero p { margin-left: auto; margin-right: auto; }
+      .hero-btns { justify-content: center; }
+      .hero-art { height: 330px; max-width: 420px; margin: 0 auto; width: 100%; }
+      .hc-in { width: 150px; } .hc-in img { height: 100px; }
+      .features { grid-template-columns: repeat(2, 1fr); }
+      .deal-box { grid-template-columns: 1fr; padding: 20px 16px; }
+      .deal-img { height: 220px; }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
+      .i-title { font-size: 34px; }
+    }
+    @media (max-width: 640px) {
+      .menu-btn { display: block; }
+      nav { position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; align-items: flex-start; padding: 0 24px; gap: 0; max-height: 0; overflow: hidden; transition: max-height .3s; border-bottom: 1px solid #e5e7eb; }
+      nav.open { max-height: 360px; padding: 10px 24px 16px; }
+      nav a { padding: 10px 0; width: 100%; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .card .img, .oos { height: 150px; }
+      .card h3 { font-size: 14px; min-height: 38px; }
+      .card .price { font-size: 17px; }
+      .actions { grid-template-columns: 1fr; }
+      .timer div { min-width: 54px; } .timer b { font-size: 20px; }
+    }
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr 1fr; }
+      .foot-grid { grid-template-columns: 1fr; }
+      .i-title { font-size: 28px; }
+      .hero h1 { font-size: 30px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body class="lock">
+
+  <!-- ================= INTRO ================= -->
+  <div id="intro">
+    <div class="panel l"></div><div class="panel r"></div>
+    <div class="i-glow"></div>
+    <div class="i-content">
+      <div class="i-ring">
+        <svg viewBox="0 0 150 150">
+          <circle class="track" cx="75" cy="75" r="70"/>
+          <circle class="dash" cx="75" cy="75" r="62"/>
+          <circle class="draw" cx="75" cy="75" r="70"/>
+        </svg>
+        <div class="i-bag">🛍️</div>
+      </div>
+      <div class="i-title" id="introTitle"></div>
+      <div class="i-tag">Smart Shopping • Best Prices</div>
+      <div class="i-pct" id="introPct">0%</div>
+      <div class="i-line"><i id="introBar"></i></div>
+    </div>
+    <button class="skip-btn" id="skipBtn" type="button">Skip ›</button>
+  </div>
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <a class="logo" href="index.html">Shop <span>Smart AI</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+    <nav id="nav">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="my-order.html">My Orders</a>
+      <a href="cart.html">Cart<span class="cart-badge" id="cartCount">0</span></a>
+      <a href="login.html" id="loginLink">Login</a>
+    </nav>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="hero">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+    <div class="hero-inner">
+      <div>
+        <span class="eyebrow anim-in d1">🔥 Navi Collection · ₹1,000 thi ₹10,000</span>
+        <h1 class="anim-in d2">Smart Shopping,<span class="rot-wrap"><span id="rot">Smart Savings</span></span></h1>
+        <p class="anim-in d3">Best products, best prices ane fast delivery. Tamari pasandgi na real products ek j jagya e, AI ni madad thi.</p>
+        <div class="hero-btns anim-in d4">
+          <a class="btn btn-white" href="products.html">Shop Now</a>
+          <a class="btn btn-line" href="#featured">Featured Products</a>
+        </div>
+        <div class="price-note anim-in d5">✔ Free delivery ₹999 ni upar &nbsp;·&nbsp; ✔ 7 divas return</div>
+      </div>
+      <div class="hero-art anim-in d4" id="heroArt"></div>
+    </div>
+  </section>
+
+  <!-- ================= MARQUEE ================= -->
+  <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+  <!-- ================= FEATURES ================= -->
+  <div class="features" style="margin-top:28px">
+    <div class="feature reveal"><div class="ic">🚚</div><h4>Fast Delivery</h4><p>3-5 divas ma ghare</p></div>
+    <div class="feature reveal"><div class="ic">💰</div><h4>Best Prices</h4><p>Hamesha sasto bhav</p></div>
+    <div class="feature reveal"><div class="ic">🔒</div><h4>Secure Payment</h4><p>100% safe checkout</p></div>
+    <div class="feature reveal"><div class="ic">↩️</div><h4>Easy Returns</h4><p>7 divas return policy</p></div>
+  </div>
+
+  <!-- ================= CATEGORIES ================= -->
+  <section class="section">
+    <h2 class="section-title reveal">Shop By Category</h2>
+    <p class="section-sub reveal">Tamari pasandgi ni category pasand karo</p>
+    <div class="cat-grid" id="catGrid"></div>
+  </section>
+
+  <!-- ================= DEAL OF THE DAY ================= -->
+  <section class="deal" id="dealWrap">
+    <div class="deal-box reveal" id="dealBox"></div>
+  </section>
+
+  <!-- ================= FEATURED PRODUCTS ================= -->
+  <section class="section" id="featured">
+    <h2 class="section-title reveal">Featured Products</h2>
+    <p class="section-sub reveal">Sauthi vadhu pasand karela real products</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="grid" id="productGrid"></div>
+    <div class="see-all"><a class="btn" href="products.html">Badha Products Juo →</a></div>
+  </section>
+
+  <!-- ================= PROMO ================= -->
+  <section class="promo reveal">
+    <h2>🎉 Special Offer: Up to 50% OFF</h2>
+    <p>Limited time deal. Coupon <strong>SMART10</strong> vapro ane vadhu bachat karo!</p>
+    <a class="btn btn-white" href="products.html">Grab The Deal</a>
+  </section>
+
+  <!-- ================= NEWSLETTER ================= -->
+  <section class="section">
+    <h2 class="section-title reveal">Get Latest Offers</h2>
+    <p class="section-sub reveal">Email nakho ane navi offers sauthi pehela melavo</p>
+    <form class="news reveal" id="newsForm">
+      <input type="email" id="newsEmail" placeholder="tamaro@email.com" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <h4>Shop Smart AI</h4>
+        <p class="about">Smart online shopping platform. Best products, best prices ane fast delivery, badhu ek j jagya e.</p>
+      </div>
+      <div><h4>Quick Links</h4><a href="index.html">Home</a><a href="products.html">Products</a><a href="cart.html">Cart</a></div>
+      <div><h4>Account</h4><a href="login.html">Login / Register</a><a href="profile.html">My Profile</a><a href="my-order.html">My Orders</a></div>
+      <div><h4>Support</h4><a href="contact.html">Contact Us</a><a href="about.html">About Us</a><a href="ai-assistant.html">AI Assistant</a></div>
+    </div>
+    <div class="copy">© 2026 Shop Smart AI. All rights reserved.</div>
+  </footer>
+
+  <div id="toast"></div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const rupee = n => "₹" + Number(n).toLocaleString("en-IN");
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+      "<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='#f4f6fa'/>" +
+      "<text x='50%' y='50%' font-size='18' fill='#9ca3af' text-anchor='middle' font-family='Arial'>Product Image</text></svg>");
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    /* =========================================================
+       REAL PRODUCTS (products.html jevi j list, ₹1,000 - ₹10,000)
+       ========================================================= */
+    const PRODUCTS = [
+      { id: 1, name: "Wireless Bluetooth Headphones", category: "Electronics", price: 1499, oldPrice: 2999, rating: 4.5, reviews: 1280, stock: 25,
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600" },
+      { id: 2, name: "Smart Watch Series X", category: "Wearables", price: 2999, oldPrice: 5999, rating: 4.3, reviews: 860, stock: 12,
+        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600" },
+      { id: 3, name: "Running Sports Shoes", category: "Fashion", price: 1999, oldPrice: 3499, rating: 4.4, reviews: 540, stock: 40,
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" },
+      { id: 4, name: "Portable Power Bank 20000mAh", category: "Accessories", price: 1299, oldPrice: 1999, rating: 4.6, reviews: 2100, stock: 0,
+        image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=600" },
+      { id: 5, name: "Mirrorless Digital Camera", category: "Electronics", price: 8999, oldPrice: 12999, rating: 4.7, reviews: 310, stock: 6,
+        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600" },
+      { id: 6, name: "Leather Casual Backpack", category: "Accessories", price: 1199, oldPrice: 2199, rating: 4.2, reviews: 720, stock: 33,
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600" },
+      { id: 7, name: "Ceramic Table Lamp", category: "Home", price: 1099, oldPrice: 1799, rating: 4.1, reviews: 190, stock: 18,
+        image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600" },
+      { id: 8, name: "Fitness Smart Band", category: "Wearables", price: 1499, oldPrice: 2499, rating: 4.0, reviews: 410, stock: 52,
+        image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=600" },
+      { id: 9, name: "Mechanical Gaming Keyboard", category: "Electronics", price: 2499, oldPrice: 3999, rating: 4.4, reviews: 650, stock: 21,
+        image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600" },
+      { id: 10, name: "Portable Bluetooth Speaker", category: "Electronics", price: 3499, oldPrice: 5999, rating: 4.5, reviews: 980, stock: 15,
+        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600" }
+    ];
+    const byId = id => PRODUCTS.find(p => p.id === Number(id));
+    const discOf = p => p.oldPrice > p.price ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+    const scoreOf = p => {
+      const maxRev = Math.max(1, ...PRODUCTS.map(x => x.reviews || 0));
+      return (p.rating / 5 * 60) + Math.min(1, (p.reviews || 0) / maxRev) * 25 + Math.min(1, discOf(p) / 60) * 15;
+    };
+    const inStock = PRODUCTS.filter(p => p.stock > 0);
+
+    /* ---------- Storage helpers ---------- */
+    function getCart() { try { const c = JSON.parse(localStorage.getItem("cart")); return Array.isArray(c) ? c : []; } catch (e) { return []; } }
+    function saveCart(c) { try { localStorage.setItem("cart", JSON.stringify(c)); } catch (e) {} }
+    function getList(k) { try { const l = JSON.parse(localStorage.getItem(k)); return Array.isArray(l) ? l.map(Number).filter(Boolean) : []; } catch (e) { return []; } }
+    let wishlist = getList("wishlist");
+    function showToast(msg) {
+      const t = $("toast"); t.textContent = msg; t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    /* =========================================================
+       CART + BUY NOW
+       ========================================================= */
+    function updateCartCount() { $("cartCount").textContent = getCart().reduce((s, i) => s + (Number(i.qty) || 0), 0); }
+    function addToCart(id) {
+      const p = byId(id);
+      if (!p || !(p.stock > 0)) return showToast("Aa product stock ma nathi");
+      const cart = getCart();
+      const item = cart.find(i => Number(i.id) === p.id);
+      const limit = Math.min(10, p.stock);
+      if (item) {
+        if ((Number(item.qty) || 0) >= limit) return showToast("Aa thi vadhu quantity upalabdh nathi");
+        item.qty = (Number(item.qty) || 0) + 1;
+      } else cart.push({ id: p.id, name: p.name, price: p.price, image: p.image, qty: 1 });
+      saveCart(cart); updateCartCount(); showToast("Cart ma add thai gayu ✔");
+    }
+    let buying = false;
+    function buyNow(id) {
+      if (buying) return;
+      const p = byId(id);
+      if (!p || !(p.stock > 0)) return showToast("Aa product stock ma nathi");
+      try {
+        localStorage.setItem("buyNowItem", JSON.stringify({ id: p.id, name: p.name, price: p.price, image: p.image, stock: p.stock, qty: 1 }));
+      } catch (e) { return showToast("Browser storage block chhe, Buy Now chalshe nahi"); }
+      buying = true;
+      showToast("Checkout par jaie chhie... ⚡");
+      setTimeout(() => { location.href = "checkout.html?mode=buynow"; }, 500);
+    }
+    function rememberProduct(id) {
+      const p = byId(id);
+      if (p) { try { localStorage.setItem("selectedProduct", JSON.stringify(p)); } catch (e) {} }
+    }
+    function toggleWish(id, btn) {
+      if (wishlist.includes(id)) { wishlist = wishlist.filter(x => x !== id); btn.textContent = "🤍"; showToast("Pasandida ma thi hatavyu"); }
+      else { wishlist.push(id); btn.textContent = "❤️"; showToast("Pasandida ma umeryu ❤️"); }
+      try { localStorage.setItem("wishlist", JSON.stringify(wishlist)); } catch (e) {}
+    }
+
+    /* =========================================================
+       INTRO (navi animation)
+       ========================================================= */
+    let introDone = false;
+    function finishIntro() {
+      if (introDone) return;
+      introDone = true;
+      $("intro").classList.add("open");
+      document.body.classList.remove("lock");
+      document.body.classList.add("ready");
+      try { sessionStorage.setItem("introSeen2", "1"); } catch (e) {}
+      setTimeout(() => { const el = $("intro"); if (el) el.remove(); }, 1100);
+    }
+    function startIntro() {
+      let seen = false;
+      try { seen = sessionStorage.getItem("introSeen2") === "1"; } catch (e) {}
+      if (seen || reduceMotion) {
+        $("intro").remove();
+        document.body.classList.remove("lock");
+        document.body.classList.add("ready");
+        return;
+      }
+      const text = "Shop Smart AI";
+      $("introTitle").innerHTML = [...text].map((ch, i) =>
+        ch === " " ? '<span class="sp"></span>' :
+        `<span class="${i >= 5 ? "acc" : ""}" style="animation-delay:${1.0 + i * 0.07}s">${ch}</span>`).join("");
+
+      /* Percent counter 0 -> 100 */
+      const total = 3000, t0 = performance.now();
+      (function tick(now) {
+        if (introDone) return;
+        const p = Math.min(1, (now - t0) / total);
+        const eased = 1 - Math.pow(1 - p, 2);
+        const pct = Math.round(eased * 100);
+        $("introPct").textContent = pct + "%";
+        $("introBar").style.width = pct + "%";
+        if (p < 1) requestAnimationFrame(tick);
+        else setTimeout(finishIntro, 250);
+      })(t0);
+      $("skipBtn").onclick = finishIntro;
+    }
+
+    /* =========================================================
+       HERO: rotating words, floating products, parallax
+       ========================================================= */
+    function startRotator() {
+      const words = ["Smart Savings", "Best Deals", "Fast Delivery", "Real Products"];
+      let i = 0;
+      const el = $("rot");
+      if (reduceMotion) return;
+      setInterval(() => {
+        i = (i + 1) % words.length;
+        el.classList.remove("swap"); void el.offsetWidth;
+        el.textContent = words[i];
+        el.classList.add("swap");
+      }, 2600);
+    }
+
+    function renderHeroArt() {
+      const top = [...inStock].sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, 3);
+      const pos = ["a", "b", "c"];
+      $("heroArt").innerHTML = top.map((p, i) => `
+        <div class="hc ${pos[i]}" data-depth="${(i + 1) * 8}">
+          <a class="hc-in" href="product-details.html?id=${p.id}" onclick="rememberProduct(${p.id})">
+            ${discOf(p) ? `<em>${discOf(p)}% OFF</em>` : ""}
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.onerror=null;this.src='${placeholder}'">
+            <strong>${esc(p.name)}</strong>
+            <span>${rupee(p.price)}</span>
+          </a>
+        </div>`).join("");
+
+      if (reduceMotion) return;
+      const hero = $("hero");
+      hero.addEventListener("mousemove", e => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        document.querySelectorAll(".hc").forEach(c => {
+          const d = Number(c.dataset.depth) || 8;
+          c.style.transform = `translate(${(x * d * 2).toFixed(1)}px, ${(y * d * 2).toFixed(1)}px)`;
+        });
+      });
+      hero.addEventListener("mouseleave", () => document.querySelectorAll(".hc").forEach(c => c.style.transform = ""));
+    }
+
+    function renderMarquee() {
+      const items = [...new Set(PRODUCTS.map(p => p.category))].map(c => `<span><b>★</b>${esc(c)}</span>`)
+        .concat(["<span><b>★</b>Free Delivery ₹999 ni upar</span>", "<span><b>★</b>7 Divas Return</span>", "<span><b>★</b>Secure Payment</span>", "<span><b>★</b>Best Prices</span>"]).join("");
+      $("marquee").innerHTML = items + items + items + items;
+    }
+
+    /* =========================================================
+       CATEGORIES
+       ========================================================= */
+    function renderCategories() {
+      const icons = { Electronics: "🎧", Wearables: "⌚", Fashion: "👟", Accessories: "🎒", Home: "🏠" };
+      const cats = [...new Set(PRODUCTS.map(p => p.category))];
+      $("catGrid").innerHTML = cats.map(c => {
+        const n = PRODUCTS.filter(p => p.category === c).length;
+        return `<a class="cat reveal" href="products.html?cat=${encodeURIComponent(c.toLowerCase())}">
+                  <span class="ic">${icons[c] || "🛍️"}</span>${esc(c)}<small>${n} product${n > 1 ? "s" : ""}</small></a>`;
+      }).join("");
+    }
+
+    /* =========================================================
+       DEAL OF THE DAY (countdown aaj raate 12 vagya sudhi)
+       ========================================================= */
+    function renderDeal() {
+      const p = [...inStock].sort((a, b) => discOf(b) - discOf(a))[0];
+      if (!p) { $("dealWrap").style.display = "none"; return; }
+      $("dealBox").innerHTML = `
+        <a class="deal-img" href="product-details.html?id=${p.id}" onclick="rememberProduct(${p.id})">
+          <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.onerror=null;this.src='${placeholder}'">
+        </a>
+        <div>
+          <span class="deal-tag">⚡ DEAL OF THE DAY</span>
+          <h2>${esc(p.name)}</h2>
+          <div class="deal-price"><strong>${rupee(p.price)}</strong><s>${rupee(p.oldPrice)}</s><span>${discOf(p)}% OFF</span></div>
+          <div class="timer">
+            <div><b id="tH">00</b><small>Kalak</small></div>
+            <div><b id="tM">00</b><small>Minit</small></div>
+            <div><b id="tS">00</b><small>Second</small></div>
+          </div>
+          <div class="deal-btns">
+            <button class="btn b1" onclick="addToCart(${p.id})">🛒 Add To Cart</button>
+            <button class="btn b2" onclick="buyNow(${p.id})">⚡ Buy Now</button>
+          </div>
+        </div>`;
+
+      const pad = n => String(n).padStart(2, "0");
+      const tick = () => {
+        const now = new Date(), end = new Date(now);
+        end.setHours(24, 0, 0, 0);
+        const s = Math.max(0, Math.floor((end - now) / 1000));
+        $("tH").textContent = pad(Math.floor(s / 3600));
+        $("tM").textContent = pad(Math.floor(s % 3600 / 60));
+        $("tS").textContent = pad(s % 60);
+      };
+      tick(); setInterval(tick, 1000);
+    }
+
+    /* =========================================================
+       FEATURED PRODUCTS (tabs)
+       ========================================================= */
+    let tab = "all";
+    function renderTabs() {
+      const cats = ["all", ...new Set(PRODUCTS.map(p => p.category))];
+      $("tabs").innerHTML = cats.map(c =>
+        `<button class="tab ${tab === c ? "active" : ""}" data-tab="${esc(c)}">${c === "all" ? "Badha" : esc(c)}</button>`).join("");
+    }
+    function cardHTML(p, i) {
+      const d = discOf(p), ok = p.stock > 0;
+      return `
+        <article class="card" style="animation-delay:${Math.min(i, 8) * 55}ms">
+          ${d ? `<span class="badge">${d}% OFF</span>` : ""}
+          <button class="heart" data-wish="${p.id}" aria-label="Wishlist">${wishlist.includes(p.id) ? "❤️" : "🤍"}</button>
+          <a class="img" href="product-details.html?id=${p.id}" onclick="rememberProduct(${p.id})">
+            <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.onerror=null;this.src='${placeholder}'">
+          </a>
+          ${ok ? "" : `<div class="oos">Out of Stock</div>`}
+          <div class="body">
+            <div class="cat-name">${esc(p.category)}</div>
+            <h3><a href="product-details.html?id=${p.id}" onclick="rememberProduct(${p.id})">${esc(p.name)}</a></h3>
+            <div class="stars">${"★".repeat(Math.round(p.rating))}${"☆".repeat(5 - Math.round(p.rating))}<small>(${p.reviews.toLocaleString("en-IN")})</small></div>
+            <div class="price">${rupee(p.price)}${p.oldPrice > p.price ? `<small>${rupee(p.oldPrice)}</small>` : ""}</div>
+            <div class="actions">
+              <button class="btn b-cart" onclick="addToCart(${p.id})" ${ok ? "" : "disabled"}>${ok ? "🛒 Add To Cart" : "Sold Out"}</button>
+              <button class="btn b-buy" onclick="buyNow(${p.id})" ${ok ? "" : "disabled"}>⚡ Buy Now</button>
+              <a class="btn b-view" href="product-details.html?id=${p.id}" onclick="rememberProduct(${p.id})">View Details</a>
+            </div>
+          </div>
+        </article>`;
+    }
+    function renderProducts() {
+      const list = PRODUCTS.filter(p => tab === "all" || p.category === tab)
+        .sort((a, b) => (b.stock > 0) - (a.stock > 0) || scoreOf(b) - scoreOf(a)).slice(0, 8);
+      $("productGrid").innerHTML = list.map(cardHTML).join("");
+    }
+    $("tabs").addEventListener("click", e => {
+      const b = e.target.closest("[data-tab]"); if (!b) return;
+      tab = b.dataset.tab; renderTabs(); renderProducts();
+    });
+    $("productGrid").addEventListener("click", e => {
+      const h = e.target.closest(".heart"); if (h) toggleWish(Number(h.dataset.wish), h);
+    });
+
+    /* =========================================================
+       SCROLL REVEAL, HEADER, NEWSLETTER
+       ========================================================= */
+    function startReveal() {
+      const items = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window)) { items.forEach(i => i.classList.add("show")); return; }
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add("show"); io.unobserve(en.target); } });
+      }, { threshold: .12 });
+      items.forEach((el, i) => { el.style.transitionDelay = (i % 4) * 80 + "ms"; io.observe(el); });
+    }
+    function updateLoginLink() {
+      try {
+        const u = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || "null");
+        if (u && u.name) { $("loginLink").textContent = "Hi, " + u.name.split(" ")[0]; $("loginLink").href = "profile.html"; }
+      } catch (e) {}
+    }
+    $("menuBtn").onclick = () => $("nav").classList.toggle("open");
+    $("newsForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const v = $("newsEmail").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return showToast("Sacho email lakho");
+      $("newsEmail").value = ""; showToast("Subscribe thai gayu 🎉");
+    });
+    window.addEventListener("storage", e => { if (e.key === "cart") updateCartCount(); });
+
+    /* ---------- Start ---------- */
+    renderHeroArt();
+    renderMarquee();
+    renderCategories();
+    renderDeal();
+    renderTabs();
+    renderProducts();
+    updateCartCount();
+    updateLoginLink();
+    startRotator();
+    startReveal();
+    startIntro();
+  </script>
+</body>
+</html>
